@@ -2,15 +2,38 @@ from bs4 import BeautifulSoup
 import requests
 import json
 
-r = requests.get("https://www.thecheesecakefactory.com/menu/")
-soup = BeautifulSoup(r.content, "html.parser")
+siteURL = "https://www.thecheesecakefactory.com/menu/"
+
+
+def getscript(site):
+    r = requests.get(site)
+    soup = BeautifulSoup(r.content, "html.parser")
+    script = soup.find("script", {"type": "application/json"})
+    return script
+
+
+def scripttostring(script):
+    data = json.loads(str(script)[48:-10])
+    return data
+
+
+def dirtymenu(data):
+    with open("dirty_menu.json", "w") as outfile:
+        json.dump(data, outfile, indent=2)
+
+
+script = getscript(siteURL)
+data = scripttostring(script)
+dirtymenu(data)
+# r = requests.get("https://www.thecheesecakefactory.com/menu/")
+# soup = BeautifulSoup(r.content, "html.parser")
 
 # get the script with a type of application/json on the cheesecake factory
-script = soup.find("script", {"type": "application/json"})
+# script = soup.find("script", {"type": "application/json"})
 
 # turn it into a string, removing the first 48 characters and last 10 characters (the script tags)
-data = json.loads(str(script)[48:-10])
+#data = json.loads(str(script)[48:-10])
 
 # dump to a file called "menu.json"
-with open("dirty_menu.json", "w") as outfile:
-    json.dump(data, outfile, indent=2)
+#with open("dirty_menu.json", "w") as outfile:
+ #   json.dump(data, outfile, indent=2)
