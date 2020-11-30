@@ -1,0 +1,1 @@
+This program scrapes and uploads to firestore.
